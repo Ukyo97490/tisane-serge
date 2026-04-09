@@ -1,12 +1,27 @@
 @extends('layouts.admin')
-@section('title', 'Commandes')
-@section('page-title', 'Commandes')
+@section('title', $showArchived ? 'Commandes archivées' : 'Commandes')
+@section('page-title', $showArchived ? 'Commandes archivées' : 'Commandes')
 
 @section('content')
+
+{{-- Onglets --}}
+<div class="flex gap-2 mb-5">
+    <a href="{{ route('admin.orders.index') }}"
+       class="px-4 py-2 rounded-lg text-sm font-medium transition-colors {{ !$showArchived ? 'bg-herb-700 text-white' : 'bg-white text-earth-600 hover:bg-gray-50 shadow-sm' }}">
+        Commandes actives
+    </a>
+    <a href="{{ route('admin.orders.index', ['archives' => 1]) }}"
+       class="px-4 py-2 rounded-lg text-sm font-medium transition-colors {{ $showArchived ? 'bg-herb-700 text-white' : 'bg-white text-earth-600 hover:bg-gray-50 shadow-sm' }}">
+        Archives
+    </a>
+</div>
 
 {{-- Filtres --}}
 <div class="bg-white rounded-xl shadow-sm p-4 mb-5">
     <form method="GET" class="flex flex-wrap gap-3 items-end">
+        @if($showArchived)
+            <input type="hidden" name="archives" value="1">
+        @endif
         <div class="flex-1 min-w-48">
             <label class="form-label text-xs">Recherche</label>
             <input type="text" name="q" value="{{ request('q') }}" class="form-input py-2 text-sm"
@@ -27,7 +42,7 @@
         </div>
         <button type="submit" class="btn-primary btn-sm py-2">Filtrer</button>
         @if(request()->hasAny(['q', 'status', 'date']))
-            <a href="{{ route('admin.orders.index') }}" class="btn-outline btn-sm py-2">Réinitialiser</a>
+            <a href="{{ route('admin.orders.index', $showArchived ? ['archives' => 1] : []) }}" class="btn-outline btn-sm py-2">Réinitialiser</a>
         @endif
     </form>
 </div>
@@ -75,7 +90,21 @@
                         </div>
                     </td>
                     <td class="px-5 py-3">
-                        <a href="{{ route('admin.orders.show', $order) }}" class="btn-outline btn-sm py-1">Voir</a>
+                        <div class="flex items-center gap-2">
+                            <a href="{{ route('admin.orders.show', $order) }}" class="btn-outline btn-sm py-1">Voir</a>
+                            @if($showArchived)
+                                <form method="POST" action="{{ route('admin.orders.unarchive', $order) }}">
+                                    @csrf
+                                    <button type="submit" class="btn-sm py-1 px-2 bg-gray-100 text-earth-600 hover:bg-gray-200 rounded-lg text-xs transition-colors">Désarchiver</button>
+                                </form>
+                            @else
+                                <form method="POST" action="{{ route('admin.orders.archive', $order) }}"
+                                      onsubmit="return confirm('Archiver la commande {{ $order->reference }} ?')">
+                                    @csrf
+                                    <button type="submit" class="btn-sm py-1 px-2 bg-gray-100 text-earth-500 hover:bg-amber-50 hover:text-amber-700 rounded-lg text-xs transition-colors">Archiver</button>
+                                </form>
+                            @endif
+                        </div>
                     </td>
                 </tr>
                 @empty

@@ -10,7 +10,15 @@ class OrderController extends Controller
 {
     public function index(Request $request)
     {
+        $showArchived = $request->boolean('archives');
+
         $query = Order::with('pickupPoint')->orderByDesc('created_at');
+
+        if ($showArchived) {
+            $query->archived();
+        } else {
+            $query->active();
+        }
 
         if ($request->filled('status')) {
             $query->where('status', $request->status);
@@ -38,7 +46,7 @@ class OrderController extends Controller
             'annulee'    => 'Annulée',
         ];
 
-        return view('admin.orders.index', compact('orders', 'statusLabels'));
+        return view('admin.orders.index', compact('orders', 'statusLabels', 'showArchived'));
     }
 
     public function show(Order $order)
@@ -65,5 +73,19 @@ class OrderController extends Controller
         $order->update(['status' => $request->status]);
 
         return back()->with('success', 'Statut de la commande mis à jour.');
+    }
+
+    public function archive(Order $order)
+    {
+        $order->update(['archived_at' => now()]);
+
+        return back()->with('success', 'Commande archivée.');
+    }
+
+    public function unarchive(Order $order)
+    {
+        $order->update(['archived_at' => null]);
+
+        return back()->with('success', 'Commande désarchivée.');
     }
 }

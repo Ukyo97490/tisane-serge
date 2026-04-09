@@ -76,4 +76,6 @@ Route::prefix('admin')
         Route::get('commandes', [AdminOrderController::class, 'index'])->name('orders.index');
         Route::get('commandes/{order}', [AdminOrderController::class, 'show'])->name('orders.show');
         Route::post('commandes/{order}/statut', [AdminOrderController::class, 'updateStatus'])->name('orders.updateStatus');
+        Route::post('commandes/{order}/archiver', [AdminOrderController::class, 'archive'])->name('orders.archive');
+        Route::post('commandes/{order}/desarchiver', [AdminOrderController::class, 'unarchive'])->name('orders.unarchive');
     });

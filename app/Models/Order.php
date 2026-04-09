@@ -12,7 +12,7 @@ class Order extends Model
         'reference', 'customer_name', 'customer_email', 'customer_phone',
         'pickup_point_id', 'pickup_date', 'pickup_time',
         'total', 'status', 'notes',
-        'reminder_24h_sent', 'reminder_1h_sent',
+        'reminder_24h_sent', 'reminder_1h_sent', 'archived_at',
     ];
 
     protected function casts(): array
@@ -22,7 +22,23 @@ class Order extends Model
             'total'             => 'decimal:2',
             'reminder_24h_sent' => 'boolean',
             'reminder_1h_sent'  => 'boolean',
+            'archived_at'       => 'datetime',
         ];
+    }
+
+    public function scopeActive($query)
+    {
+        return $query->whereNull('archived_at');
+    }
+
+    public function scopeArchived($query)
+    {
+        return $query->whereNotNull('archived_at');
+    }
+
+    public function isArchived(): bool
+    {
+        return $this->archived_at !== null;
     }
 
     public function pickupPoint(): BelongsTo
