@@ -115,4 +115,7 @@ return [
         'name' => env('MAIL_FROM_NAME', env('APP_NAME', 'Laravel')),
     ],
 
+    // Email du vendeur pour les notifications de nouvelles commandes
+    'seller_email' => env('MAIL_SELLER_EMAIL', env('MAIL_FROM_ADDRESS', 'hello@example.com')),
+
 ];
