@@ -7,10 +7,48 @@
     <div>
         <p class="text-earth-500 text-sm">{{ $products->total() }} produit{{ $products->total() > 1 ? 's' : '' }}</p>
     </div>
-    <a href="{{ route('admin.produits.create') }}" class="btn-primary btn-sm">
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
-        Nouveau produit
-    </a>
+    <div class="flex items-center gap-2">
+        {{-- Export --}}
+        <a href="{{ route('admin.produits.export') }}"
+           class="btn-outline btn-sm flex items-center gap-1.5">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+            Exporter ZIP
+        </a>
+
+        {{-- Import (toggle) --}}
+        <button type="button" onclick="document.getElementById('import-panel').classList.toggle('hidden')"
+                class="btn-outline btn-sm flex items-center gap-1.5">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l4-4m0 0l4 4m-4-4v12"/></svg>
+            Importer ZIP
+        </button>
+
+        <a href="{{ route('admin.produits.create') }}" class="btn-primary btn-sm flex items-center gap-1.5">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+            Nouveau produit
+        </a>
+    </div>
+</div>
+
+{{-- Panneau import --}}
+<div id="import-panel" class="hidden bg-amber-50 border border-amber-200 rounded-xl p-5 mb-5">
+    <h3 class="font-semibold text-earth-800 mb-1">Importer des produits</h3>
+    <p class="text-earth-500 text-xs mb-4">
+        Le ZIP doit contenir un fichier <code class="bg-white px-1 rounded">produits.csv</code> (séparateur <code class="bg-white px-1 rounded">;</code>) et un dossier <code class="bg-white px-1 rounded">images/</code> optionnel.<br>
+        Colonnes attendues : <code class="bg-white px-1 rounded">name, slug, category_slug, description, benefits, price, unit, stock, active, sort_order, image_filename</code><br>
+        Les produits existants (même slug) sont mis à jour, les nouveaux sont créés.
+    </p>
+    <form method="POST" action="{{ route('admin.produits.import') }}" enctype="multipart/form-data"
+          class="flex items-end gap-3">
+        @csrf
+        <div class="flex-1">
+            <label class="form-label text-xs">Fichier ZIP (max 50 Mo)</label>
+            <input type="file" name="zip_file" accept=".zip" required
+                   class="form-input py-2 text-sm file:mr-3 file:py-1 file:px-3 file:rounded file:border-0 file:text-xs file:bg-herb-100 file:text-herb-700 file:cursor-pointer">
+        </div>
+        <button type="submit" class="btn-primary btn-sm py-2">Importer</button>
+        <button type="button" onclick="document.getElementById('import-panel').classList.add('hidden')"
+                class="btn-outline btn-sm py-2">Annuler</button>
+    </form>
 </div>
 
 {{-- Filtres --}}

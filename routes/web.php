@@ -63,6 +63,9 @@ Route::prefix('admin')
         Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 
         // Produits
+        Route::get('produits/export/zip', [AdminProductController::class, 'exportZip'])->name('produits.export');
+        Route::get('produits/import/exemple', [AdminProductController::class, 'downloadExample'])->name('produits.example');
+        Route::post('produits/import/zip', [AdminProductController::class, 'importZip'])->name('produits.import');
         Route::resource('produits', AdminProductController::class)->parameters(['produits' => 'product']);
 
         // Catégories
