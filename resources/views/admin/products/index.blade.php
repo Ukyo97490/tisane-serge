@@ -77,12 +77,12 @@
     </form>
 </div>
 
-{{-- Formulaire bulk --}}
+{{-- Form bulk (checkboxes + barre d'actions seulement, sans forms imbriqués) --}}
 <form id="bulk-form" method="POST" action="{{ route('admin.produits.bulk') }}">
     @csrf
     <input type="hidden" name="action" id="bulk-action">
 
-    {{-- Barre d'actions lot (cachée par défaut) --}}
+    {{-- Barre d'actions lot --}}
     <div id="bulk-bar" class="hidden items-center gap-3 bg-herb-50 border border-herb-200 rounded-xl px-4 py-3 mb-3">
         <span class="text-herb-700 text-sm font-medium">
             <span id="bulk-count">0</span> sélectionné(s)
@@ -127,7 +127,7 @@
                 </thead>
                 <tbody class="divide-y divide-gray-50">
                     @forelse($products as $product)
-                    <tr class="table-row-hover" id="row-{{ $product->id }}">
+                    <tr class="table-row-hover">
                         <td class="px-4 py-3">
                             <input type="checkbox" name="ids[]" value="{{ $product->id }}"
                                    class="row-check rounded border-gray-300 text-herb-600 focus:ring-herb-500 cursor-pointer"
@@ -159,11 +159,9 @@
                         <td class="px-5 py-3">
                             <div class="flex items-center justify-end gap-2">
                                 <a href="{{ route('admin.produits.edit', $product) }}" class="btn-outline btn-sm py-1">Modifier</a>
-                                <form method="POST" action="{{ route('admin.produits.destroy', $product) }}"
-                                      onsubmit="return confirm('Supprimer ce produit ?')">
-                                    @csrf @method('DELETE')
-                                    <button type="submit" class="btn-danger btn-sm py-1">Supprimer</button>
-                                </form>
+                                <button type="button"
+                                        onclick="submitDelete('delete-product-{{ $product->id }}', '{{ addslashes($product->name) }}')"
+                                        class="btn-danger btn-sm py-1">Supprimer</button>
                             </div>
                         </td>
                     </tr>
@@ -180,6 +178,14 @@
         </div>
     </div>
 </form>
+
+{{-- Forms de suppression individuelle (hors du form bulk) --}}
+@foreach($products as $product)
+<form id="delete-product-{{ $product->id }}"
+      method="POST" action="{{ route('admin.produits.destroy', $product) }}" class="hidden">
+    @csrf @method('DELETE')
+</form>
+@endforeach
 
 @push('scripts')
 <script>
@@ -215,6 +221,11 @@ function submitBulk(action) {
     if (action === 'delete' && !confirm(checked.length + ' produit(s) seront supprimés définitivement. Continuer ?')) return;
     document.getElementById('bulk-action').value = action;
     document.getElementById('bulk-form').submit();
+}
+
+function submitDelete(formId, name) {
+    if (!confirm('Supprimer le produit "' + name + '" ?')) return;
+    document.getElementById(formId).submit();
 }
 </script>
 @endpush

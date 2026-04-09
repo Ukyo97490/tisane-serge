@@ -10,7 +10,7 @@
     </a>
 </div>
 
-{{-- Formulaire bulk --}}
+{{-- Form bulk (checkboxes + barre d'actions seulement, sans forms imbriqués) --}}
 <form id="bulk-form" method="POST" action="{{ route('admin.categories.bulk') }}">
     @csrf
     <input type="hidden" name="action" id="bulk-action">
@@ -77,11 +77,9 @@
                     <td class="px-5 py-3">
                         <div class="flex items-center justify-end gap-2">
                             <a href="{{ route('admin.categories.edit', $category) }}" class="btn-outline btn-sm py-1">Modifier</a>
-                            <form method="POST" action="{{ route('admin.categories.destroy', $category) }}"
-                                  onsubmit="return confirm('Supprimer cette catégorie ?')">
-                                @csrf @method('DELETE')
-                                <button type="submit" class="btn-danger btn-sm py-1">Supprimer</button>
-                            </form>
+                            <button type="button"
+                                    onclick="submitDelete('delete-cat-{{ $category->id }}', '{{ addslashes($category->name) }}')"
+                                    class="btn-danger btn-sm py-1">Supprimer</button>
                         </div>
                     </td>
                 </tr>
@@ -94,6 +92,14 @@
         </table>
     </div>
 </form>
+
+{{-- Forms de suppression individuelle (hors du form bulk) --}}
+@foreach($categories as $category)
+<form id="delete-cat-{{ $category->id }}"
+      method="POST" action="{{ route('admin.categories.destroy', $category) }}" class="hidden">
+    @csrf @method('DELETE')
+</form>
+@endforeach
 
 @push('scripts')
 <script>
@@ -129,6 +135,11 @@ function submitBulk(action) {
     if (action === 'delete' && !confirm(checked.length + ' catégorie(s) seront supprimées définitivement. Continuer ?')) return;
     document.getElementById('bulk-action').value = action;
     document.getElementById('bulk-form').submit();
+}
+
+function submitDelete(formId, name) {
+    if (!confirm('Supprimer la catégorie "' + name + '" ?')) return;
+    document.getElementById(formId).submit();
 }
 </script>
 @endpush
