@@ -108,6 +108,36 @@ class ProductController extends Controller
         return back()->with('success', 'Produit supprimé.');
     }
 
+    public function bulkAction(Request $request)
+    {
+        $request->validate([
+            'ids'    => 'required|array|min:1',
+            'ids.*'  => 'integer|exists:products,id',
+            'action' => 'required|in:activate,deactivate,delete',
+        ]);
+
+        $products = Product::whereIn('id', $request->ids);
+
+        switch ($request->action) {
+            case 'activate':
+                $products->update(['active' => true]);
+                return back()->with('success', count($request->ids) . ' produit(s) activé(s).');
+
+            case 'deactivate':
+                $products->update(['active' => false]);
+                return back()->with('success', count($request->ids) . ' produit(s) désactivé(s).');
+
+            case 'delete':
+                foreach ($products->get() as $product) {
+                    if ($product->image) {
+                        Storage::disk('public')->delete($product->image);
+                    }
+                    $product->delete();
+                }
+                return back()->with('success', count($request->ids) . ' produit(s) supprimé(s).');
+        }
+    }
+
     public function downloadExample()
     {
         $categories = Category::orderBy('name')->get();

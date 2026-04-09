@@ -64,4 +64,29 @@ class CategoryController extends Controller
         $category->delete();
         return back()->with('success', 'Catégorie supprimée.');
     }
+
+    public function bulkAction(Request $request)
+    {
+        $request->validate([
+            'ids'    => 'required|array|min:1',
+            'ids.*'  => 'integer|exists:categories,id',
+            'action' => 'required|in:activate,deactivate,delete',
+        ]);
+
+        $query = Category::whereIn('id', $request->ids);
+
+        switch ($request->action) {
+            case 'activate':
+                $query->update(['active' => true]);
+                return back()->with('success', count($request->ids) . ' catégorie(s) activée(s).');
+
+            case 'deactivate':
+                $query->update(['active' => false]);
+                return back()->with('success', count($request->ids) . ' catégorie(s) désactivée(s).');
+
+            case 'delete':
+                $query->delete();
+                return back()->with('success', count($request->ids) . ' catégorie(s) supprimée(s).');
+        }
+    }
 }

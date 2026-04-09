@@ -66,9 +66,11 @@ Route::prefix('admin')
         Route::get('produits/export/zip', [AdminProductController::class, 'exportZip'])->name('produits.export');
         Route::get('produits/import/exemple', [AdminProductController::class, 'downloadExample'])->name('produits.example');
         Route::post('produits/import/zip', [AdminProductController::class, 'importZip'])->name('produits.import');
+        Route::post('produits/bulk', [AdminProductController::class, 'bulkAction'])->name('produits.bulk');
         Route::resource('produits', AdminProductController::class)->parameters(['produits' => 'product']);
 
         // Catégories
+        Route::post('categories/bulk', [CategoryController::class, 'bulkAction'])->name('categories.bulk');
         Route::resource('categories', CategoryController::class)->parameters(['categories' => 'category']);
 
         // Points de retrait
