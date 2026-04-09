@@ -67,8 +67,8 @@ Route::prefix('admin')
         Route::resource('categories', CategoryController::class)->parameters(['categories' => 'category']);
 
         // Points de retrait
-        Route::resource('points-retrait', PickupPointController::class)
-            ->parameters(['points-retrait' => 'pickupPoint']);
+        Route::resource('pickup-points', PickupPointController::class)
+            ->parameters(['pickup-points' => 'pickupPoint']);
 
         // Commandes
         Route::get('commandes', [AdminOrderController::class, 'index'])->name('orders.index');
