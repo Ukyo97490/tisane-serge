@@ -1,6 +1,8 @@
 @extends('layouts.app')
 
-@section('title', 'Commande confirmée')
+@section('seo_title', 'Commande confirmée — Tisane Lontan')
+@section('seo_description', 'Votre commande Tisane Lontan est confirmée.')
+@section('robots', 'noindex, nofollow')
 
 @section('content')
 <div class="max-w-2xl mx-auto px-4 sm:px-6 py-14">

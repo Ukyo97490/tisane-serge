@@ -1,6 +1,9 @@
 @extends('layouts.app')
 
-@section('title', 'Mon panier')
+@section('seo_title', 'Mon panier — Tisane Lontan')
+@section('seo_description', 'Votre panier de produits artisanaux Tisane Lontan.')
+@section('robots', 'noindex, follow')
+@section('canonical', route('cart.index'))
 
 @section('content')
 <div class="max-w-4xl mx-auto px-4 sm:px-6 py-10">

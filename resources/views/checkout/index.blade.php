@@ -1,6 +1,9 @@
 @extends('layouts.app')
 
-@section('title', 'Commander')
+@section('seo_title', 'Commander — Tisane Lontan')
+@section('seo_description', 'Finalisez votre commande de produits artisanaux Tisane Lontan.')
+@section('robots', 'noindex, follow')
+@section('canonical', route('checkout.index'))
 
 @section('content')
 <div class="max-w-5xl mx-auto px-4 sm:px-6 py-10">
