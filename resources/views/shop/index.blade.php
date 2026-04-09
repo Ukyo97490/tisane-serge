@@ -34,7 +34,7 @@
 @if($products->count())
 <script type="application/ld+json">
 {
-  "@context": "https://schema.org",
+  "@@context": "https://schema.org",
   "@type": "ItemList",
   "name": "{{ $currentCategory ? $currentCategory->name : 'Tous nos produits' }}",
   "description": "{{ $pageDesc }}",
